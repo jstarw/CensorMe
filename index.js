@@ -13,11 +13,10 @@ app.use(bodyParser.urlencoded({
 app.get('/censor', function(req, res) {
     var url = req.query.url;
     var filter = JSON.parse(req.query.filter);
-    console.log(url);
-    console.log("filter: ", filter);
-    conceptExtractor.extractConcept(url, filter, function(){
+    conceptExtractor.extractConcept(url, filter, function(responseData){
         res.json({
-            success: true
+            success: true,
+            data: responseData
         });
     });
 });
