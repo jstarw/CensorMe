@@ -12,20 +12,17 @@ var getConcepts = function (user_concept, cb) {
             errHandler(err, cb);
         }
         var results = resp.body.entities;
-        console.log(results);
+        /*console.log(results.sort(function(a, b){
+            return parseFloat(a.occurrences) - parseFloat(b.occurrences);
+        }));*/
         if(isNaN(user_concept) && user_concept && results && results.length != 0){
-            var highest={occurrences: 1}, second_highest={occurrences: 0};
-            for(var i = 0; i < results.length; i++){
-                if((second_highest.occurrences < results[i].occurrences) && 
-                    !(results[i].text.toLowerCase() === user_concept.toLowerCase())){
-                    second_highest = results[i];
-                    if(second_highest.occurrences > highest.occurrences){
-                        var holder = highest;
-                        highest = second_highest;
-                        second_highest = holder;
-                    }
-                }
-            }
+            
+            var highest={occurrences: 0}, second_highest={docs_with_phrase: 0};
+            results.sort(function(a, b){
+                return parseFloat(a.occurrences) - parseFloat(b.occurrences);
+            });
+            highest = results[results.length/2];
+            second_highest = results[results.length/2 + 1];
             cb({
                 success: true,
                 top1: highest, 
