@@ -1,0 +1,25 @@
+{
+  "name": "CensorMe",
+  "version": "1.0.0",
+  "description": "chrome extension to filter our the terrors of the internet\"",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jstarw/CensorMe.git"
+  },
+  "author": "Malcom Li, Jonathon Wen, Ronnie Huang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jstarw/CensorMe/issues"
+  },
+  "homepage": "https://github.com/jstarw/CensorMe",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "request": "^2.72.0"
+  }
+}
