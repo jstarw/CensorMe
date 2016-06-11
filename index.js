@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var port = process.env.PORT || 8080;
-var request = ('request');
+var conceptExtractor = require('./utils/conceptExtractor')
 
 app.use('/', express.static(__dirname+ '/public'));
 app.use(bodyParser.json());
@@ -11,15 +11,15 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/censor', function(req, res) {
-    console.log(req.query);
     var url = req.query.url;
-    var filter = req.query.filter;
+    var filter = JSON.parse(req.query.filter);
     console.log(url);
-
-    res.json({
-        success: true
+    console.log("filter: ", filter);
+    conceptExtractor.extractConcept(url, filter, function(){
+        res.json({
+            success: true
+        });
     });
-
 });
 
 var server = app.listen(port, function(cb) {
