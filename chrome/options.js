@@ -1,10 +1,10 @@
 $(document).ready(function() {
     restore_options();
     $('#save').on('click', save_options);
-    $('#add_concept').on('click', add_empty_field);
-    $('#add_word').on('click', add_empty_field);
-    $('#delete_concept').on('click', delete_field);
-    $('#delete_word').on('click', delete_field);
+    $('#add_concept').on('click', function() {add_new_fields('input_concept', [''], '.concept_div')});
+    $('#add_word').on('click', function() {add_new_fields('input_word', [''], '.word_div')});
+    $('#delete_concept').on('click', function() {delete_field('.input_concept')});
+    $('#delete_word').on('click', function() {delete_field('.input_word')});
 });
 
 // Saves options to chrome.storage
@@ -56,6 +56,6 @@ function add_new_fields(thisClass, thisValue, position) {
     }   
 }
 
-function delete_field() {
-    
+function delete_field(position) {
+    $(position).last().remove();
 }
