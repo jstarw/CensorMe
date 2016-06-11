@@ -10,3 +10,7 @@ $(document).ready(function() {
         console.log(items.likesColor);
     });
 });
+
+function sendData() {
+    
+}

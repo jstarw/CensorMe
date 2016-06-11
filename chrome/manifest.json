@@ -9,7 +9,7 @@
     "default_popup": "popup.html"
   },
 
-  "options_page": "index.html",
+  "options_page": "popup.html",
 
   "permissions": [
     "activeTab",
@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["jquery-3.0.0.min.js","script.js"]
+      "js": ["jquery-3.0.0.min.js","scriptmain.js"]
     }
   ]
 }

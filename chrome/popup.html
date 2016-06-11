@@ -1,47 +1,23 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>CensorMe</title>
 </head>
 <body>
-<p>Input field to be filtered</p>
-<form>
-    <input type="" name="">
-</form>
-<p id="color"></p>
-<p id="like"></p>
-<button id="save">ijij</button>
+	<h1>CensorMe!</h1>
+	<h3>Items to be filtered</h3>
 
-<script type="text/javascript">
-    function save_options() {
-        alert("hi!!!");
-    }
-    document.getElementById('save').addEventListener('click', save_options);
-</script>
-</body>
-</html> -->
+	<p>Filter by: concepts</p>
+	<a href="#" id="add_concept">&nbsp;+&nbsp;</a>
+	<a href="#" id="delete_concept">&nbsp;-&nbsp;</a>
+	<div class="concept_div"></div>
+	<p>Filter by: specific words</p>
+	<a href="#" id="add_word">&nbsp;+&nbsp;</a>
+	<a href="#" id="delete_word">&nbsp;-&nbsp;</a>
+	<div class="word_div"></div>
+	<button id="save">Save preferences</button>
 
-<!DOCTYPE html>
-<html>
-<head><title>My Test Extension Options</title></head>
-<body>
-
-Favorite color:
-<select id="color">
- <option value="red">red</option>
- <option value="green">green</option>
- <option value="blue">blue</option>
- <option value="yellow">yellow</option>
-</select>
-
-<label>
-  <input type="checkbox" id="like">
-  I like colors.
-</label>
-
-<div id="status"></div>
-<button id="save">Save</button>
-
-<script src="options.js"></script>
+<script type="text/javascript" src="jquery-3.0.0.min.js"></script>
+<script type="text/javascript" src="options.js"></script>
 </body>
 </html>

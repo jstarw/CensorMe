@@ -1,16 +1,30 @@
+$(document).ready(function() {
+    restore_options();
+    $('#save').on('click', save_options);
+    $('#add_concept').on('click', add_empty_field);
+    $('#add_word').on('click', add_empty_field);
+    $('#delete_concept').on('click', delete_field);
+    $('#delete_word').on('click', delete_field);
+});
+
 // Saves options to chrome.storage
 function save_options() {
-    var color = document.getElementById('color').value;
-    var likesColor = document.getElementById('like').checked;
+    var conceptArray = $('.input_concept').map(function(i, elem) {
+        return $(elem).val();
+    }).get();
+    var wordArray = $('.input_word').map(function(i, elem) {
+        return $(elem).val();
+    }).get();
+    console.log(conceptArray, wordArray);
+
     chrome.storage.sync.set({
-        favoriteColor: color,
-        likesColor: likesColor
+        concepts: conceptArray,
+        words: wordArray
         }, function() {
         // Update status to let user know options were saved.
-        var status = document.getElementById('status');
-        status.textContent = 'Options saved.';
+        $('#status').html("value saved.");
         setTimeout(function() {
-            status.textContent = '';
+            $('#status').html("");
         }, 750);
     });
 }
@@ -20,13 +34,28 @@ function save_options() {
 function restore_options() {
   // Use default value color = 'red' and likesColor = true.
     chrome.storage.sync.get({
-        favoriteColor: 'red',
-        likesColor: true
+        concepts: "test",
+        words: "test"
     }, function(items) {
-        document.getElementById('color').value = items.favoriteColor;
-        document.getElementById('like').checked = items.likesColor;
+        add_new_fields("input_concept", items.concepts, '.concept_div');
+        add_new_fields("input_word", items.words, '.word_div');
+
+        console.log("concept: ", items.concepts);
+        console.log("words: ", items.words);
     });
 }
-document.addEventListener('DOMContentLoaded', restore_options);
-document.getElementById('save').addEventListener('click',
-    save_options);
+
+function add_new_fields(thisClass, thisValue, position) {
+    for (key in thisValue) {
+        $('<input>').attr({
+            type: 'text',
+            class: thisClass,
+            name: thisClass,
+            value: thisValue[key]
+        }).appendTo(position);
+    }   
+}
+
+function delete_field() {
+    
+}
