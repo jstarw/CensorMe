@@ -11,11 +11,15 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/censor', function(req, res) {
-    console.log(req.params);
+    console.log(req.query);
+    var url = req.query.url;
+    var filter = req.query.filter;
+    console.log(url);
+
     res.json({
         success: true
     });
-    
+
 });
 
 var server = app.listen(port, function(cb) {
