@@ -19,7 +19,8 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["jquery-3.0.0.min.js","scriptmain.js"]
+      "js": ["jquery-3.0.0.min.js","scriptmain.js"],
+      "css": ["injected_style.css"]
     }
   ]
 }
