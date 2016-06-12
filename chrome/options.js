@@ -5,7 +5,6 @@ $(document).ready(function() {
     $('#add_word').on('click', function() {add_new_fields('input_word', [''], '.word_div', 'type the word here:')});
     $('#delete_concept').on('click', function() {delete_field('.input_concept')});
     $('#delete_word').on('click', function() {delete_field('.input_word')});
-
 });
 
 // Saves options to chrome.storage
@@ -28,6 +27,7 @@ function save_options() {
             $('#status').hide();
         }, 1000);
 
+        $('.recommendations li').remove();
         sendConcepts(conceptArray);
     });
 }
@@ -37,8 +37,8 @@ function save_options() {
 function restore_options() {
   // Use default value color = 'red' and likesColor = true.
     chrome.storage.sync.get({
-        concepts: "test",
-        words: "test"
+        concepts: "",
+        words: ""
     }, function(items) {
         add_new_fields("input_concept", items.concepts, '.concept_div', 'type the concept here:');
         add_new_fields("input_word", items.words, '.word_div', 'type the word here:');
@@ -60,50 +60,51 @@ function add_new_fields(thisClass, thisValue, position, placeholder) {
     }   
 }
 
+function add_new_recommendation(thisClass, thisValue, position) {
+    for (key in thisValue) {
+        var list = $('<li>').appendTo(position);
+        $('<a>').attr({
+            href: "#",
+            class: thisClass
+        }).html(thisValue[key]).appendTo(list);
+    }
+}
+
 function delete_field(position) {
     $(position).last().remove();
 }
 
 function sendConcepts(concepts) {
-    var GET_URL = "https://censor-me.herokuapp.com";
-    $.ajax({
-        url: GET_URL,
-        data: {
-            concepts: concepts[0]
-        },
-        success: recommend_similar_concepts
-    }).fail(function() {
+    var GET_URL = "https://censor-me.herokuapp.com/concept";
+    $.get(GET_URL,{concept: concepts[0]}, recommend_similar_concepts)
+    .fail(function() {
         alert("you suck!!!");
     });
 }
 
 function recommend_similar_concepts(res) {
-    console.log(typeof(res));
     console.log(res);
-
-    var temp = {
-        "data": {
-            "success": true,
-            "top1": {
-                "text": "s Pizza",
-                "docs_with_phrase": 83,
-                "occurrences": 386,
-                "docs_with_all_terms": 163,
-                "cluster": 1
-            },
-            "top2": {
-                "text": "United States",
-                "docs_with_phrase": 108,
-                "occurrences": 267,
-                "docs_with_all_terms": 118,
-                "cluster": 0
-            }
+    var res = {
+        data: {
+            success: true,
+            results: ["violence", "badboi", "sweet man"]
         }
     }
 
-    if (!temp["data"]["success"]) {
-        console.log("not successful")
-    } else {
-        
-    }
+    if (!res["data"]["success"]) {
+        console.log("not successful");
+        return;
+    } 
+    var concepts = res["data"]["results"].map(function(elem) {
+        return elem;//["text"];
+    });
+    console.log(concepts);
+    $('.recommendations').show();
+    add_new_recommendation("recommend_concept", concepts, '.recommendations');
+
+    $('.recommend_concept').on('click', function() {
+        var c = $(this).html();
+        add_new_fields('input_concept', [c], '.concept_div', 'type the concept here:');
+        this.remove();
+    });
 }

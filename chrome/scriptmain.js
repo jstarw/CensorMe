@@ -24,24 +24,28 @@ function send_data(websiteUrl, concepts, words) {
         GET_URL, 
         {
             url: websiteUrl,
-            concepts: concepts, //Array()
-            words: words //Array()
+            concepts: concepts //Array()
         }, filter_concept
     ).fail(function() {
         console.log("you suck!!!");
-        filter_concept(1);
     });
+}
+
+function filter(res) {
+    // var res = {
+    //     success: true,
+    //     conceptMatch: ["violence", "nudity"]
+    // }
+    console.log(res);
+    if (res["success"] == true) {
+        if (res["conceptMatch"].length > 0) {
+            filter_concept(res["success"]["conceptMatch"]);
+        }
+    }
 }
 
 function filter_concept(res) {
     console.log(res);
-    var res = {
-        success: true,
-        conceptMatch: ["violence", "nudity"],
-        wordMatch: {
-            "Linux": "sentenceContext"
-        }
-    }
     if (res["conceptMatch"].length == 0) return;
 
     var div = $("<div>", {class: "warning_concept"}).appendTo('body');
