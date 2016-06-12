@@ -17,16 +17,14 @@ app.get('/censor', function(req, res) {
     var url = req.query.url;
     console.log("this is url ", url);
     var filteredConcept = typeof(req.query.concepts) === 'string'? JSON.parse(req.query.concepts) : req.query.concepts;
-    if (filteredConcept) {
-        conceptUtils.extractConcept(url, function(concepts) {
-            conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
-                res.json({
-                    success: true,
-                    conceptMatch: responseData
-                });
+    conceptUtils.extractConcept(url, function(concepts) {
+        conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
+            res.json({
+                success: true,
+                conceptMatch: responseData
             });
         });
-    }
+    });
 });
 
 app.get('/concept', function(req, res){
