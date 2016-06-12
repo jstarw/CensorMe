@@ -5,6 +5,7 @@ $(document).ready(function() {
     $('#add_word').on('click', function() {add_new_fields('input_word', [''], '.word_div')});
     $('#delete_concept').on('click', function() {delete_field('.input_concept')});
     $('#delete_word').on('click', function() {delete_field('.input_word')});
+
 });
 
 // Saves options to chrome.storage
@@ -26,6 +27,8 @@ function save_options() {
         setTimeout(function() {
             $('#status').html("");
         }, 750);
+
+        sendConcepts(conceptArray);
     });
 }
 
@@ -58,4 +61,48 @@ function add_new_fields(thisClass, thisValue, position) {
 
 function delete_field(position) {
     $(position).last().remove();
+}
+
+function sendConcepts(concepts) {
+    var GET_URL = "https://censor-me.herokuapp.com";
+    $.ajax({
+        url: GET_URL,
+        data: {
+            concepts: concepts[0]
+        },
+        success: recommend_similar_concepts
+    }).fail(function() {
+        alert("you suck!!!");
+    });
+}
+
+function recommend_similar_concepts(res) {
+    console.log(typeof(res));
+    console.log(res);
+
+    var temp = {
+        "data": {
+            "success": true,
+            "top1": {
+                "text": "s Pizza",
+                "docs_with_phrase": 83,
+                "occurrences": 386,
+                "docs_with_all_terms": 163,
+                "cluster": 1
+            },
+            "top2": {
+                "text": "United States",
+                "docs_with_phrase": 108,
+                "occurrences": 267,
+                "docs_with_all_terms": 118,
+                "cluster": 0
+            }
+        }
+    }
+
+    if (!temp["data"]["success"]) {
+        console.log("not successful")
+    } else {
+        
+    }
 }

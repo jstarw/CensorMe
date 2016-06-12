@@ -1,5 +1,4 @@
 $(document).ready(function() {
-	console.log("is this working? ");
     var url = window.location.href;
 	chrome.storage.sync.get({
         concepts: "test",
@@ -7,21 +6,43 @@ $(document).ready(function() {
     }, function(items) {
         console.log("concept: ", items.concepts);
         console.log("words: ", items.words);
-        sendData(url, items.concepts, items.words)
+        filter_word(["Linux"]);
+        //send_data(url, items.concepts, items.words)
     });
 });
 
-function sendData(websiteUrl, concepts, words) {
+function send_data(websiteUrl, concepts, words) {
     var GET_URL = "https://censor-me.herokuapp.com/";
     $.ajax({
         url: GET_URL,
         data: {
-            websiteUrl: websiteUrl,
-            concepts: concepts,
-            words: words
+            url: websiteUrl,
+            concepts: concepts, //Array()
+            words: words //Array()
         },
-        success: function(res) {console.log(res)}
+        success: filter
     }).fail(function() {
         alert("you suck!!!");
     });
+}
+
+function filter(res) {
+    console.log(res);
+    var res = {
+        success: true,
+        conceptMatch: ["violence", "nudity"],
+        wordMatch: {
+            "Linux": "sentenceContext"
+        }
+    }
+}
+
+function filter_word(words) {
+    for (i in words) {
+        var regex = new RegExp(words[i], "g");
+        $("body").contents().each(function () {
+            if (this.nodeType === 3) this.nodeValue = $.trim($(this).text()).replace(regex, "[EXPLICIT]")
+            if (this.nodeType === 1) $(this).html( $(this).html().replace(regex, "[EXPLICIT]") )
+        })
+    }
 }
