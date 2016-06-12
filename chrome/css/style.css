@@ -1,0 +1,42 @@
+body {
+	text-align: center;
+	width: 250px;
+}
+
+h3 {
+	padding-bottom: 5px;
+}
+
+.title {
+	display: inline;
+
+}
+
+.concept_div, .word_div {
+	padding: 10px;
+	width: 100%;
+}
+
+.input_concept, .input_word {
+	margin: 2px;
+}
+
+a:visited {
+	text-decoration: none;
+}
+
+#add_concept, #delete_concept, 
+#add_word, #delete_word {
+	border: #337ab7 1px solid;
+	padding-bottom: 2px;
+	border-radius: 3px;
+	text-decoration: none;
+}
+
+#save {
+	margin-bottom: 10px;
+}
+
+#status {
+	margin: 0 10px 10px 10px;
+}

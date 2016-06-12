@@ -2,23 +2,29 @@
 <html>
 <head>
     <title>CensorMe</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
-	<h1>CensorMe!</h1>
-	<h3>Items to be filtered</h3>
+	<h3>CensorMe!</h3>
 
-	<p>Filter by: concepts</p>
+	<p class="title">Filter by: <strong>concepts</strong>&nbsp;</p>
 	<a href="#" id="add_concept">&nbsp;+&nbsp;</a>
 	<a href="#" id="delete_concept">&nbsp;-&nbsp;</a>
-	<div class="concept_div"></div>
-	<p>Filter by: specific words</p>
+	<div class="concept_div input-group"></div>
+
+	<p class="title">Filter by: <strong>specific words</strong>&nbsp;</p>
 	<a href="#" id="add_word">&nbsp;+&nbsp;</a>
 	<a href="#" id="delete_word">&nbsp;-&nbsp;</a>
-	<div class="word_div"></div>
-	<button id="save">Save preferences</button>
-	<p id="status"></p>
+	<div class="word_div input-group"></div>
 
-<script type="text/javascript" src="jquery-3.0.0.min.js"></script>
-<script type="text/javascript" src="options.js"></script>
+	<button class="btn btn-primary" id="save">Save preferences</button>
+	<div class="alert alert-success" hidden id="status">Value saved!</div>
+	<ul hidden class="nav nav-pills nav-justified recommendations">
+	<p>We found some similar concepts, click on them to add!</p>
+	</ul>
+
+<script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript" src="js/options.js"></script>
 </body>
 </html>

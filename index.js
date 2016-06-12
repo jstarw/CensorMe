@@ -22,7 +22,11 @@ app.get('/censor', function(req, res) {
             url: url
         }
         conceptUtils.extractConcept(extractRequest, function(concepts) {
-            conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
+            conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData, errCode) {
+                if (errCode) {
+                    res.status(errCode);
+                    res.send("Error when extracting concepts from data");
+                }
                 res.json({
                     success: true,
                     conceptMatch: responseData
@@ -36,7 +40,11 @@ app.get('/censor', function(req, res) {
                     text: body
                 }
                 conceptUtils.extractConcept(request, function(concepts) {
-                    conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
+                    conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData, errCode) {
+                if (errCode) {
+                    res.status(errCode);
+                    res.send("Error when extracting concepts from data");
+                }
                        res.json({
                             success: true,
                             conceptMatch: responseData

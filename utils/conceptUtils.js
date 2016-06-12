@@ -18,14 +18,16 @@ var extractConcept = function (request, cb) {
         var mappedConcepts = {};
         var totalOccurences = 0;
         async.forEach(concepts, function(eachConcept, callback){
-            if (eachConcept.occurrences > 2) {
+            if (eachConcept.occurrences > 5) {
                 var key = eachConcept['concept'].toLowerCase();
                 mappedConcepts[key] = eachConcept.occurrences;
                 totalOccurences += eachConcept.occurrences;
             }
             callback();
         }, function (err) {
-            if (err) console.error(err.message);
+            if (err) {
+                errHandler(err, cb);
+            }
             // configs is now a map of JSON data
             mappedValues[mapped_concepts] = mappedConcepts;
             mappedValues[total_occurences] = totalOccurences;
@@ -43,13 +45,15 @@ var filterConcepts = function (mappedValues, filteredConcepts, cb) {
             compareSematics(key, filteredConcept, function(matchingResponse) {
             var percentMatched = (matchingResponse) * 100;
             var weightedSum = percentMatched * mappedValues[mapped_concepts][key] / mappedValues[total_occurences];
-            console.log("weighted sum : " + weightedSum + " between: " + key + " & " + filteredConcept);
+            //console.log("weighted sum : " + weightedSum + " between: " + key + " & " + filteredConcept);
             // console.log("Total occurrences and current " , mappedValues[mapped_concepts][key] , mappedValues[][total_occurences]);
             runningWeightedSum += weightedSum;
             callback();
             });
         }, function (err) {
-            if (err) console.error(err.message);
+            if (err) {
+                errHandler(err, cb);
+            }
             console.log(filteredConcept + " has a weight score of : " + runningWeightedSum);
             if (runningWeightedSum > 5) {
                 foundConcepts.push(filteredConcept);
@@ -58,7 +62,9 @@ var filterConcepts = function (mappedValues, filteredConcepts, cb) {
             filteredCallback();
         });
     }, function (err) {
-            if (err) console.error(err.message);
+            if (err) {
+                errHandler(err, cb);
+            }
             cb(foundConcepts);
     });
 }
