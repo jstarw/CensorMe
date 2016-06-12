@@ -42,17 +42,15 @@ function filter_concept(res) {
             "Linux": "sentenceContext"
         }
     }
+    if (res["conceptMatch"].length == 0) return;
 
-    if (res["conceptMatch"].length == 0) {
-        console.log('good page!');
-        return;
-    }
     var div = $("<div>", {class: "warning_concept"}).appendTo('body');
+    var divCentered = $("<div>", {class: "warning_centered"}).appendTo(div)
     var description = $("<div>", {class: "warning_description"})
         .html("We have detected some content that might not be suitable for you. Would you still like to see it? ")
-        .appendTo(div);
-    var okButton = $("<div>", {class: "warning_ok"}).html("That's okay, let me see it.").appendTo(div);
-    var closeButton = $("<div>", {class: "warning_close"}).html("Take me out of here.").appendTo(div);
+        .appendTo(divCentered);
+    var okButton = $("<div>", {class: "warning_ok"}).html("That's okay, let me see it.").appendTo(divCentered);
+    var closeButton = $("<div>", {class: "warning_close"}).html("Take me out of here.").appendTo(divCentered);
     console.log(okButton,closeButton);
     okButton.on('click', close_overlay);
     closeButton.on('click', go_back);

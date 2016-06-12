@@ -1,0 +1,43 @@
+.warning_concept {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+	background-color: white;
+	overflow: none;
+}
+
+.warning_concept .warning_centered {
+	position: absolute;
+    top: 40%;
+    text-align: center;
+    /*width: 60%;
+    margin: 0 50%;*/
+}
+
+.warning_concept .warning_ok,
+.warning_concept .warning_close {
+    padding: 10px;
+    border: black 1px solid;
+    border-radius: 3px;
+    width: 30%;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    margin: 10px;
+}
+
+.warning_concept .warning_ok {
+	background-color: rgba(180, 255, 189, 0.88);
+}
+
+.warning_concept .warning_close {
+	background-color: rgba(255, 180, 180, 0.88);
+}
+
+.warning_concept .warning_description {
+	text-align: center;
+    padding: 10px;
+}
