@@ -18,7 +18,7 @@ app.get('/censor', function(req, res) {
             conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
                 res.json({
                     success: true,
-                    data: responseData
+                    conceptMatch: responseData
                 });
             });
         });
