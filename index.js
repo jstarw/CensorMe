@@ -26,7 +26,6 @@ app.get('/censor', function(req, res) {
 app.get('/concept', function(req, res){
     var user_concept = req.query['concept'];
     console.log(req.query['concept']);
-    var filter = JSON.pa
     similarConcept.getConcepts(user_concept, function(resp){
         res.json({
             data: resp

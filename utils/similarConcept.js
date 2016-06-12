@@ -16,13 +16,11 @@ var getConcepts = function (user_concept, cb) {
             return parseFloat(a.occurrences) - parseFloat(b.occurrences);
         }));*/
         if(isNaN(user_concept) && user_concept && results && results.length != 0){
-            
-            var highest={occurrences: 0}, second_highest={docs_with_phrase: 0};
             results.sort(function(a, b){
                 return parseFloat(a.occurrences) - parseFloat(b.occurrences);
             });
-            highest = results[results.length/2];
-            second_highest = results[results.length/2 + 1];
+            var highest = results[results.length/2];
+            var second_highest = results[results.length/2 + 1];
             cb({
                 success: true,
                 top1: highest, 
