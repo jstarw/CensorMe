@@ -5,10 +5,8 @@ var request = require('request');
 
 var total_occurences = 'total_occurences';
 
-var extractConcept = function (url, cb) {
-    var request = {
-        url: url
-    }
+var extractConcept = function (request, cb) {
+
     var extractedText;
     client.call('extractconcepts', request, function(conceptErr, responseConcept){
         if (conceptErr) {
