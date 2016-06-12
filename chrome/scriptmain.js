@@ -6,22 +6,21 @@ $(document).ready(function() {
     }, function(items) {
         console.log("concept: ", items.concepts);
         console.log("words: ", items.words);
-        filter_word(["Linux"]);
-        //send_data(url, items.concepts, items.words)
+        filter_word(items.words);
+        send_data(url, items.concepts, items.words)
     });
 });
 
 function send_data(websiteUrl, concepts, words) {
-    var GET_URL = "https://censor-me.herokuapp.com/";
-    $.ajax({
-        url: GET_URL,
-        data: {
+    var GET_URL = "https://censor-me.herokuapp.com/censor";
+    $.get(
+        GET_URL, 
+        {
             url: websiteUrl,
             concepts: concepts, //Array()
             words: words //Array()
-        },
-        success: filter
-    }).fail(function() {
+        }, filter
+    ).fail(function() {
         alert("you suck!!!");
     });
 }
@@ -40,9 +39,11 @@ function filter(res) {
 function filter_word(words) {
     for (i in words) {
         var regex = new RegExp(words[i], "g");
+        var stars = words[i].replace(/./g, '*');
+        console.log(regex);
         $("body").contents().each(function () {
-            if (this.nodeType === 3) this.nodeValue = $.trim($(this).text()).replace(regex, "[EXPLICIT]")
-            if (this.nodeType === 1) $(this).html( $(this).html().replace(regex, "[EXPLICIT]") )
+            if (this.nodeType === 3) this.nodeValue = $.trim($(this).text()).replace(regex, stars)
+            if (this.nodeType === 1) $(this).html( $(this).html().replace(regex, stars) ) // fix this
         })
     }
 }
