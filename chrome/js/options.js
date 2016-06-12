@@ -76,7 +76,7 @@ function delete_field(position) {
 
 function sendConcepts(concepts) {
     var GET_URL = "https://censor-me.herokuapp.com/concept";
-    $.get(GET_URL,{concept: concepts[0]}, recommend_similar_concepts)
+    $.get(GET_URL,{concept: concepts}, recommend_similar_concepts)
     .fail(function() {
         alert("you suck!!!");
     });
@@ -84,12 +84,12 @@ function sendConcepts(concepts) {
 
 function recommend_similar_concepts(res) {
     console.log(res);
-    var res = {
-        data: {
-            success: true,
-            results: ["violence", "badboi", "sweet man"]
-        }
-    }
+    // var res = {
+    //     data: {
+    //         success: true,
+    //         results: ["violence", "badboi", "sweet man"]
+    //     }
+    // }
 
     if (!res["data"]["success"]) {
         console.log("not successful");
