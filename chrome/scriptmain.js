@@ -70,7 +70,7 @@ function filter_word(words) {
 
 function close_overlay(e) {
     var targ = e.target;
-    $(targ).parent().hide();
+    $(targ).parent().parent().hide();
 }
 
 function go_back(e) {
