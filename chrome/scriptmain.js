@@ -20,7 +20,8 @@ function send_data(websiteUrl, concepts, words) {
             concepts: concepts, //Array()
             words: words //Array()
         }, filter
-    ).fail(function() {
+    ).fail(function(err) {
+        console.log(err);
         alert("you suck!!!");
     });
 }

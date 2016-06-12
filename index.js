@@ -13,8 +13,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/censor', function(req, res) {
+    console.log("I AM CALLED");
     var url = req.query.url;
-    var filteredConcept = JSON.parse(req.query.concepts);
+    console.log("this is url ", url);
+    var filteredConcept = typeof(req.query.concepts) === 'string'? JSON.parse(req.query.concepts) : req.query.concepts;
     if (filteredConcept) {
         conceptUtils.extractConcept(url, function(concepts) {
             conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {

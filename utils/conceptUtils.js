@@ -6,6 +6,7 @@ var extractConcept = function (url, cb) {
     var request = {
         url: url
     }
+    console.log(request);
     var extractedText;
     client.call('extractconcepts', request, function(conceptErr, responseConcept){
         if (conceptErr) {
