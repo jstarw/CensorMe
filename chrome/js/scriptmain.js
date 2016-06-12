@@ -66,11 +66,19 @@ function filter_word(words) {
         var regex = new RegExp(words[i], "g");
         var stars = words[i].replace(/./g, '*');
         console.log(regex);
+        // recursive_replace('body', regex, stars);
         $("body").contents().each(function () {
             if (this.nodeType === 3) this.nodeValue = $.trim($(this).text()).replace(regex, stars)
             if (this.nodeType === 1) $(this).html( $(this).html().replace(regex, stars) ) // fix this
         })
     }
+}
+
+function recursive_replace(thisClass, regex, stars) {
+    $(thisClass).contents().each(function () {
+            if (this.nodeType === 3) this.nodeValue = $.trim($(this).text()).replace(regex, stars)
+            if (this.nodeType === 1) $(this).html( recursive_replace(thisClass, regex) ) // fix this
+        })
 }
 
 function close_overlay(e) {
