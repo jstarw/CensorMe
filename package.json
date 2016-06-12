@@ -4,7 +4,7 @@
   "description": "chrome extension to filter our the terrors of the internet\"",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
+    "start": "nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,8 +18,12 @@
   },
   "homepage": "https://github.com/jstarw/CensorMe",
   "dependencies": {
+    "async": "^2.0.0-rc.6",
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
-    "request": "^2.72.0"
+    "nodemon": "^1.9.2",
+    "request": "^2.72.0",
+    "lodash": "^4.13.1",
+    "havenondemand": "^1.2.0"
   }
 }
