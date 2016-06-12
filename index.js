@@ -56,7 +56,8 @@ app.get('/concept', function(req, res){
     var user_concept = (req.query['concept']);
     similarConcept.getConcepts(user_concept, function(resp){
         res.json({
-            data: resp
+            success: true,
+            results: resp
         });
     });    
 });
