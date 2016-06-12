@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+
+  "name": "CensorMe",
+  "description": "Censors out unwanted pictures and text using HPE Haven API. Built during AngelHack Toronto 2016",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+
+  "options_page": "popup.html",
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "https://ajax.googleapis.com/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["jquery-3.0.0.min.js","scriptmain.js"]
+    }
+  ]
+}
