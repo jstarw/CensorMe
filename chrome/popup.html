@@ -2,20 +2,23 @@
 <html>
 <head>
     <title>CensorMe</title>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<h1>CensorMe!</h1>
-	<h3>Items to be filtered</h3>
+	<h2>CensorMe!</h2>
 
-	<p>Filter by: concepts</p>
+	<p class="title">Filter by: concepts</p>
 	<a href="#" id="add_concept">&nbsp;+&nbsp;</a>
 	<a href="#" id="delete_concept">&nbsp;-&nbsp;</a>
 	<div class="concept_div"></div>
-	<p>Filter by: specific words</p>
+
+	<p class="title">Filter by: specific words</p>
 	<a href="#" id="add_word">&nbsp;+&nbsp;</a>
 	<a href="#" id="delete_word">&nbsp;-&nbsp;</a>
 	<div class="word_div"></div>
-	<button id="save">Save preferences</button>
+
+	<button class="btn btn-primary" id="save">Save preferences</button>
 	<p id="status"></p>
 
 <script type="text/javascript" src="jquery-3.0.0.min.js"></script>

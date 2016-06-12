@@ -1,0 +1,29 @@
+body {
+	text-align: center;
+	width: 250px;
+}
+
+.title {
+	display: inline;
+
+}
+
+.concept_div, .word_div {
+	padding: 10px
+}
+
+.input_concept, .input_word {
+	
+}
+
+a:visited {
+	text-decoration: none;
+}
+
+#add_concept, #delete_concept, 
+#add_word, #delete_word {
+	border: #337ab7 1px solid;
+	padding-bottom: 2px;
+	border-radius: 3px;
+	text-decoration: none;
+}

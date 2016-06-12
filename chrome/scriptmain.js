@@ -7,9 +7,16 @@ $(document).ready(function() {
         console.log("concept: ", items.concepts);
         console.log("words: ", items.words);
         filter_word(items.words);
+        getHtmlContent();
         send_data(url, items.concepts, items.words)
     });
 });
+
+function getHtmlContent() {
+    var content = $('body').text().replace(/\r?\n|\r/g, "").trim().replace(/\t+/g, "");
+
+    console.log(content);
+}
 
 function send_data(websiteUrl, concepts, words) {
     var GET_URL = "https://censor-me.herokuapp.com/censor";
@@ -21,7 +28,7 @@ function send_data(websiteUrl, concepts, words) {
             words: words //Array()
         }, filter
     ).fail(function() {
-        alert("you suck!!!");
+        console.log("you suck!!!");
     });
 }
 
