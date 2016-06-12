@@ -1,14 +1,15 @@
 $(document).ready(function() {
     var url = window.location.href;
 	chrome.storage.sync.get({
-        concepts: "test",
-        words: "test"
+        concepts: "",
+        words: ""
     }, function(items) {
-        console.log("concept: ", items.concepts);
-        console.log("words: ", items.words);
+        console.log("concept: ", items.concepts.length);
+        console.log("words: ", items.words.length);
         filter_word(items.words);
         getHtmlContent();
-        send_data(url, items.concepts, items.words)
+        if (items.concepts.length > 0) send_data(url, items.concepts);
+
     });
 });
 
@@ -18,7 +19,7 @@ function getHtmlContent() {
     // console.log(content);
 }
 
-function send_data(websiteUrl, concepts, words) {
+function send_data(websiteUrl, concepts) {
     var GET_URL = "https://censor-me.herokuapp.com/censor";
     $.get(
         GET_URL, 
