@@ -1,6 +1,10 @@
 havenondemand = require('havenondemand');
 var client = new havenondemand.HODClient('8e9221a2-d004-44af-b172-c3897a6b0c1e');
 var async = require('async');
+var request = require('request');
+var natural = require('natural');
+var mapped_concepts = 'mapped_concepts';
+var total_occurences = 'total_occurences';
 
 var extractConcept = function (request, cb) {
 
@@ -10,24 +14,57 @@ var extractConcept = function (request, cb) {
             errHandler(conceptErr, cb);
         }
         var concepts = responseConcept.body.concepts;
+        var mappedValues = {};
         var mappedConcepts = {};
-        async.forEach(concepts, function(eachConcept){
-            var key = eachConcept['concept'].toLowerCase();
-            mappedConcepts[key] = eachConcept.occurrences;
+        var totalOccurences = 0;
+        async.forEach(concepts, function(eachConcept, callback){
+            if (eachConcept.occurrences > 2) {
+                var key = eachConcept['concept'].toLowerCase();
+                mappedConcepts[key] = eachConcept.occurrences;
+                totalOccurences += eachConcept.occurrences;
+            }
+            callback();
+        }, function (err) {
+            if (err) console.error(err.message);
+            // configs is now a map of JSON data
+            mappedValues[mapped_concepts] = mappedConcepts;
+            mappedValues[total_occurences] = totalOccurences;
+            cb(mappedValues);
         });
-        cb(mappedConcepts);
     });
 }
 
-var filterConcepts = function (concepts, filteredConcepts, cb) {
+var filterConcepts = function (mappedValues, filteredConcepts, cb) {
     var foundConcepts = [];
-    async.forEach(filteredConcepts, function(filteredConcept) {
-        var filterBy = filteredConcept.toLowerCase();
-        if (concepts[filterBy]) {
-            foundConcepts.push(filteredConcept);
-        }
+    var conceptKeys = Object.keys(mappedValues[mapped_concepts]);
+    var runningWeightedSum = 0;
+    async.forEach(filteredConcepts, function(filteredConcept, filteredCallback) {
+        async.forEach(conceptKeys, function(key, callback) {
+            compareSematics(key, filteredConcept, function(matchingResponse) {
+            var percentMatched = (matchingResponse) * 100;
+            var weightedSum = percentMatched * mappedValues[mapped_concepts][key] / mappedValues[total_occurences];
+            console.log("weighted sum : " + weightedSum + " between: " + key + " & " + filteredConcept);
+            // console.log("Total occurrences and current " , mappedValues[mapped_concepts][key] , mappedValues[][total_occurences]);
+            runningWeightedSum += weightedSum;
+            callback();
+            });
+        }, function (err) {
+            if (err) console.error(err.message);
+            console.log(filteredConcept + " has a weight score of : " + runningWeightedSum);
+            if (runningWeightedSum > 5) {
+                foundConcepts.push(filteredConcept);
+            }
+            runningWeightedSum = 0;
+            filteredCallback();
+        });
+    }, function (err) {
+            if (err) console.error(err.message);
+            cb(foundConcepts);
     });
-    cb(foundConcepts);
+}
+
+function compareSematics (concept, filteredConcept, cb) { 
+   cb(natural.JaroWinklerDistance(concept, filteredConcept));
 }
 
 function errHandler (err, cb) {

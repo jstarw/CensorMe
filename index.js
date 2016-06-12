@@ -15,12 +15,13 @@ app.use(bodyParser.urlencoded({
 
 app.get('/censor', function(req, res) {
     var url = req.query.url;
-    var filteredConcept = JSON.parse(req.query.concepts);
+    console.log("this is url ", url);
+    var filteredConcept = typeof(req.query.concepts) === 'string'? JSON.parse(req.query.concepts) : req.query.concepts;
     if (url.indexOf("?") == -1) {
-        var requ = {
+        var extractRequest = {
             url: url
         }
-        conceptUtils.extractConcept(requ, function(concepts) {
+        conceptUtils.extractConcept(extractRequest, function(concepts) {
             conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
                 res.json({
                     success: true,
@@ -29,7 +30,6 @@ app.get('/censor', function(req, res) {
             });
         });
     } else {
-        //gotta do prettyparse shti
         request(url, function (error, response, body) {
             if (!error) {
                 var request = {
