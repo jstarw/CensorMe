@@ -2,9 +2,10 @@ var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var port = process.env.PORT || 8080;
-var request = ('request');
+var request = require('request');
 var similarConcept = require('./utils/similarConcept')
 var conceptUtils = require('./utils/conceptUtils');
+var extractor = require('unfluff');
 
 app.use('/', express.static(__dirname+ '/public'));
 app.use(bodyParser.json());
@@ -15,8 +16,11 @@ app.use(bodyParser.urlencoded({
 app.get('/censor', function(req, res) {
     var url = req.query.url;
     var filteredConcept = JSON.parse(req.query.concepts);
-    if (filteredConcept) {
-        conceptUtils.extractConcept(url, function(concepts) {
+    if (url.indexOf("?") == -1) {
+        var requ = {
+            url: url
+        }
+        conceptUtils.extractConcept(requ, function(concepts) {
             conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
                 res.json({
                     success: true,
@@ -24,7 +28,27 @@ app.get('/censor', function(req, res) {
                 });
             });
         });
+    } else {
+        //gotta do prettyparse shti
+        request(url, function (error, response, body) {
+            if (!error) {
+                var request = {
+                    text: body
+                }
+                conceptUtils.extractConcept(request, function(concepts) {
+                    conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData) {
+                       res.json({
+                            success: true,
+                            conceptMatch: responseData
+                        });
+                    });
+                }); 
+            } else {
+                console.log(error);
+            }
+        });
     }
+
 });
 
 app.get('/concept', function(req, res){

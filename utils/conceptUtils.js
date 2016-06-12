@@ -2,10 +2,8 @@ havenondemand = require('havenondemand');
 var client = new havenondemand.HODClient('8e9221a2-d004-44af-b172-c3897a6b0c1e');
 var async = require('async');
 
-var extractConcept = function (url, cb) {
-    var request = {
-        url: url
-    }
+var extractConcept = function (request, cb) {
+
     var extractedText;
     client.call('extractconcepts', request, function(conceptErr, responseConcept){
         if (conceptErr) {
