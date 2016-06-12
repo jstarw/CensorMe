@@ -6,20 +6,20 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<h2>CensorMe!</h2>
+	<h3>CensorMe!</h3>
 
-	<p class="title">Filter by: concepts</p>
+	<p class="title">Filter by: <strong>concepts</strong>&nbsp;</p>
 	<a href="#" id="add_concept">&nbsp;+&nbsp;</a>
 	<a href="#" id="delete_concept">&nbsp;-&nbsp;</a>
-	<div class="concept_div"></div>
+	<div class="concept_div input-group"></div>
 
-	<p class="title">Filter by: specific words</p>
+	<p class="title">Filter by: <strong>specific words</strong>&nbsp;</p>
 	<a href="#" id="add_word">&nbsp;+&nbsp;</a>
 	<a href="#" id="delete_word">&nbsp;-&nbsp;</a>
-	<div class="word_div"></div>
+	<div class="word_div input-group"></div>
 
 	<button class="btn btn-primary" id="save">Save preferences</button>
-	<p id="status"></p>
+	<div class="alert alert-success" hidden id="status">Value saved!</div>
 
 <script type="text/javascript" src="jquery-3.0.0.min.js"></script>
 <script type="text/javascript" src="options.js"></script>

@@ -1,8 +1,8 @@
 $(document).ready(function() {
     restore_options();
     $('#save').on('click', save_options);
-    $('#add_concept').on('click', function() {add_new_fields('input_concept', [''], '.concept_div')});
-    $('#add_word').on('click', function() {add_new_fields('input_word', [''], '.word_div')});
+    $('#add_concept').on('click', function() {add_new_fields('input_concept', [''], '.concept_div', 'type the concept here:')});
+    $('#add_word').on('click', function() {add_new_fields('input_word', [''], '.word_div', 'type the word here:')});
     $('#delete_concept').on('click', function() {delete_field('.input_concept')});
     $('#delete_word').on('click', function() {delete_field('.input_word')});
 
@@ -23,10 +23,10 @@ function save_options() {
         words: wordArray
         }, function() {
         // Update status to let user know options were saved.
-        $('#status').html("value saved.");
+        $('#status').show();
         setTimeout(function() {
-            $('#status').html("");
-        }, 750);
+            $('#status').hide();
+        }, 1000);
 
         sendConcepts(conceptArray);
     });
@@ -40,21 +40,22 @@ function restore_options() {
         concepts: "test",
         words: "test"
     }, function(items) {
-        add_new_fields("input_concept", items.concepts, '.concept_div');
-        add_new_fields("input_word", items.words, '.word_div');
+        add_new_fields("input_concept", items.concepts, '.concept_div', 'type the concept here:');
+        add_new_fields("input_word", items.words, '.word_div', 'type the word here:');
 
         console.log("concept: ", items.concepts);
         console.log("words: ", items.words);
     });
 }
 
-function add_new_fields(thisClass, thisValue, position) {
+function add_new_fields(thisClass, thisValue, position, placeholder) {
     for (key in thisValue) {
         $('<input>').attr({
             type: 'text',
-            class: thisClass,
+            class: thisClass + " form-control",
             name: thisClass,
-            value: thisValue[key]
+            value: thisValue[key],
+            placeholder: placeholder
         }).appendTo(position);
     }   
 }
