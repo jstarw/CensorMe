@@ -23,6 +23,7 @@
     "express": "^4.13.4",
     "havenondemand": "^1.2.0",
     "lodash": "^4.13.1",
+    "natural": "^0.4.0",
     "nodemon": "^1.9.2",
     "request": "^2.72.0",
     "unfluff": "^1.0.0"

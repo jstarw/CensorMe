@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({
 app.get('/censor', function(req, res) {
     var url = req.query.url;
     console.log("this is url ", url);
-    var filteredConcept = JSON.parse(req.query.concepts);
+    var filteredConcept = typeof(req.query.concepts) === 'string'? JSON.parse(req.query.concepts) : req.query.concepts;
     if (url.indexOf("?") == -1) {
         var extractRequest = {
             url: url
@@ -30,7 +30,6 @@ app.get('/censor', function(req, res) {
             });
         });
     } else {
-        //has set headers so we need to unfluff then extract
         request(url, function (error, response, body) {
             if (!error) {
                 var request = {
@@ -49,6 +48,7 @@ app.get('/censor', function(req, res) {
             }
         });
     }
+
 });
 
 app.get('/concept', function(req, res){
