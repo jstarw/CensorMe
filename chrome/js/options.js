@@ -9,8 +9,12 @@ $(document).ready(function() {
 
 // Saves options to chrome.storage
 function save_options() {
-    var conceptArray = get_value('.input_concept');
-    var wordArray = get_value('.input_word');
+    var conceptArray = $('.input_concept').map(function(i, elem) {
+        return $(elem).val();
+    }).get();
+    var wordArray = $('.input_word').map(function(i, elem) {
+        return $(elem).val();
+    }).get();
     console.log(conceptArray, wordArray);
 
     chrome.storage.sync.set({
@@ -19,7 +23,6 @@ function save_options() {
         }, function() {
         // Update status to let user know options were saved.
         $('#status').show();
-        $('.recommendations').hide()
         setTimeout(function() {
             $('#status').hide();
         }, 1000);
@@ -27,13 +30,6 @@ function save_options() {
         $('.recommendations li').remove();
         sendConcepts(conceptArray);
     });
-}
-
-function get_value(thisClass) {
-    return $(thisClass).map(function(i, elem) {
-        var c = $(elem).val();
-        if (c != "") return c;
-    }).get();
 }
 
 // Restores select box and checkbox state using the preferences
@@ -61,7 +57,7 @@ function add_new_fields(thisClass, thisValue, position, placeholder) {
             value: thisValue[key],
             placeholder: placeholder
         }).appendTo(position);
-    }   
+    }
 }
 
 function add_new_recommendation(thisClass, thisValue, position) {
@@ -88,20 +84,20 @@ function sendConcepts(concepts) {
 
 function recommend_similar_concepts(res) {
     console.log(res);
-    if (!res["success"]) {
+    // var res = {
+    //     data: {
+    //         success: true,
+    //         results: ["violence", "badboi", "sweet man"]
+    //     }
+    // }
+
+    if (!res["data"]["success"]) {
         console.log("not successful");
         return;
     } 
-    var concepts = res["results"].map(function(elem) {
-        return elem["text"];
+    var concepts = res["data"]["results"].map(function(elem) {
+        return elem;//["text"];
     });
-    var concepts_already_there = get_value('.input_concept');
-
-    // filter out concepts if already in list 
-    concepts = concepts.filter(function(val) {
-        if (concepts_already_there.indexOf(val) === -1) return 1;
-    });
-
     console.log(concepts);
     $('.recommendations').show();
     add_new_recommendation("recommend_concept", concepts, '.recommendations');

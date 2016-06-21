@@ -6,6 +6,7 @@ var request = require('request');
 var similarConcept = require('./utils/similarConcept')
 var conceptUtils = require('./utils/conceptUtils');
 var extractor = require('unfluff');
+var async = require('async');
 
 app.use('/', express.static(__dirname+ '/public'));
 app.use(bodyParser.json());
@@ -13,67 +14,95 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+function sendErrorResponse(err, errCode, res) {
+    console.log('what')
+    return res.send(err);
+}
+
+function filterConcepts(extractRequest, filteredConcept, res, done) {
+    var returnedConcepts;
+    var resData;
+    async.series([
+        function(cb) {
+            conceptUtils.extractConcept(extractRequest, function(err, concepts) {
+                if (err) {
+                    return cb(err);
+                }
+                if (!concepts) {
+                    return cb("Resource Not Found");
+                }
+                if (!err) {
+                    returnedConcepts = concepts
+                    cb();
+                }
+            });
+        },
+        function(cb) {
+            conceptUtils.filterConcepts(returnedConcepts, filteredConcept, function(err, responseData) {
+                if (err) {
+                    return cb(err);
+                }
+                resData = responseData;
+                cb();
+            });
+        }
+        ], function(err) {
+            if (err) {
+                return done(err);
+            }
+            done(null, resData);
+        }
+    );
+}
+
 app.get('/censor', function(req, res) {
     var url = req.query.url;
     console.log("this is url ", url);
     var filteredConcept = typeof(req.query.concepts) === 'string'? JSON.parse(req.query.concepts) : req.query.concepts;
-    if (url.indexOf("?") == -1) {
-        var extractRequest = {
-            url: url
-        }
-        conceptUtils.extractConcept(extractRequest, function(concepts) {
-            if (extractRequest.total_occurences <= 0) {
-                res.json({
-                    success: false
-                });
-            }
-            conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData, errCode) {
-                if (errCode) {
-                    res.status(errCode);
-                    res.send("Error when extracting concepts from data");
-                }
-                res.json({
-                    success: true,
-                    conceptMatch: responseData
-                });
-            });
-        });
-    } else {
-        request(url, function (error, response, body) {
-            if (!error) {
-                var request = {
-                    text: body
-                }
-                conceptUtils.extractConcept(request, function(concepts) {
-                    conceptUtils.filterConcepts(concepts, filteredConcept, function(responseData, errCode) {
-                        if (errCode) {
-                            res.status(errCode);
-                            res.send("Error when extracting concepts from data");
-                        }
-                       res.json({
-                            success: true,
-                            conceptMatch: responseData
-                        });
-                    });
-                }); 
+    var extractRequest = {};
+    async.series([
+        function(cb) {
+            if (url.indexOf("?") == -1) {
+                extractRequest.url = url;
+                cb();
             } else {
-                res.status(404);
-                res.send("Error when extracting concepts from data");
+                request(url, function (error, response, body) {
+                    if (error) {
+                        return sendErrorResponse(err, 404, res);
+                    }
+                    extractRequest.text = body;
+                    cb();
+                });
             }
-        });
-    }
-
+        },
+        function(cb) {
+            filterConcepts(extractRequest, filteredConcept, res, function(err, responseData) { 
+                if (err) {
+                    return sendErrorResponse(err, 404, res);
+                } else {
+                    console.log(responseData);
+                    res.json({
+                        success: true,
+                        conceptMatch: responseData
+                    });
+                }
+            });
+        }
+    ], function(err) {
+        if (err) {
+            return sendErrorResponse(err, 404, res);
+        }
+    });
 });
 
 app.get('/concept', function(req, res){
-    console.log(req.query['concept']);
     var user_concept = (req.query['concept']);
     similarConcept.getConcepts(user_concept, function(resp){
         res.json({
             success: true,
             results: resp
         });
-    });    
+    });
 });
 
 var server = app.listen(port, function(cb) {

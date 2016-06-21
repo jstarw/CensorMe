@@ -8,11 +8,10 @@ var total_occurences = 'total_occurences';
 var request = require('request');
 
 var extractConcept = function (request, cb) {
-
     var extractedText;
     client.call('extractconcepts', request, function(conceptErr, responseConcept){
         if (conceptErr) {
-            errHandler(conceptErr, cb);
+            return errHandler(conceptErr, cb);
         }
         var concepts = responseConcept.body.concepts;
         var mappedValues = {};
@@ -27,19 +26,25 @@ var extractConcept = function (request, cb) {
             callback();
         }, function (err) {
             if (err) {
-                errHandler(err, cb);
+                return errHandler(err, cb);
             }
-            // configs is now a map of JSON data
-            mappedValues[mapped_concepts] = mappedConcepts;
-            mappedValues[total_occurences] = totalOccurences;
-            cb(mappedValues);
+            else {
+                // configs is now a map of JSON data
+                mappedValues[mapped_concepts] = mappedConcepts;
+                mappedValues[total_occurences] = totalOccurences;
+                cb(null, mappedValues);
+            }
         });
     });
 }
 
 var filterConcepts = function (mappedValues, filteredConcepts, cb) {
+    console.log(mappedValues);
+    console.log(filteredConcepts);
     var foundConcepts = [];
-    var conceptKeys = Object.keys(mappedValues[mapped_concepts]);
+    if (mappedValues && mappedValues[mapped_concepts]) {
+        var conceptKeys = Object.keys(mappedValues[mapped_concepts]);
+    }
     var runningWeightedSum = 0;
     async.forEach(filteredConcepts, function(filteredConcept, filteredCallback) {
         async.forEach(conceptKeys, function(key, callback) {
@@ -47,17 +52,14 @@ var filterConcepts = function (mappedValues, filteredConcepts, cb) {
                 if (isFinite(matchingResponse)) {
                     var percentMatched = (matchingResponse) * 100;
                     var weightedSum = percentMatched * mappedValues[mapped_concepts][key] / mappedValues[total_occurences];
-                    //console.log("weighted sum : " + weightedSum + " between: " + key + " & " + filteredConcept);
-                    // console.log("Total occurrences and current " , mappedValues[mapped_concepts][key] , mappedValues[][total_occurences]);
                     runningWeightedSum += weightedSum;
                 }
                 callback();
             }, cb);
         }, function (err) {
             if (err) {
-                errHandler(err, cb);
+                return errHandler(err, cb);
             }
-            console.log(filteredConcept + " has a weight score of : " + runningWeightedSum);
             if (runningWeightedSum > 5) {
                 foundConcepts.push(filteredConcept);
             }
@@ -66,9 +68,9 @@ var filterConcepts = function (mappedValues, filteredConcepts, cb) {
         });
     }, function (err) {
             if (err) {
-                errHandler(err, cb);
+                return errHandler(err, cb);
             }
-            cb(foundConcepts);
+            cb(null, foundConcepts);
     });
 }
 
@@ -86,25 +88,27 @@ function compareSematics (concept, filteredConcept, cb, done) {
         }, //Query string data
         method: 'GET', //Specify the method
     }, function(error, response, body){
-        //console.log("Compared " + concept + " to " + filteredConcept);
         if(error) {
-            errHandler(error, done)
-            console.log(error);
+            return errHandler(error, done)
         } else {
             if (response.statusCode === 200){
-                cb(parseFloat(body));
+                return cb(parseFloat(body));
             } else {
                 //if error the just pretend its 0
-                cb(0);
+                return cb(0);
             }
         }
     });
-
 }
 
 function errHandler (err, cb) {
-    console.log("Error: ", err);
-    cb(err, 404);
+    // default to 404 if not specified
+    var errCode = err.error || 404;
+    var returnErr = {
+        error: err,
+        errCode: errCode
+    }
+    return cb(returnErr, null);
 }
 
 module.exports = {
