@@ -78,7 +78,7 @@ function sendConcepts(concepts) {
     var GET_URL = "https://censor-me.herokuapp.com/concept";
     $.get(GET_URL,{concept: concepts}, recommend_similar_concepts)
     .fail(function() {
-        alert("you suck!!!");
+        console.log("you suck!!!");
     });
 }
 
