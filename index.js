@@ -15,7 +15,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 function sendErrorResponse(err, errCode, res) {
-    console.log('what')
     return res.send(err);
 }
 

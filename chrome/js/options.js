@@ -83,7 +83,6 @@ function sendConcepts(concepts) {
 }
 
 function recommend_similar_concepts(res) {
-    console.log(res);
     // var res = {
     //     data: {
     //         success: true,
@@ -98,7 +97,6 @@ function recommend_similar_concepts(res) {
     var concepts = res["data"]["results"].map(function(elem) {
         return elem;//["text"];
     });
-    console.log(concepts);
     $('.recommendations').show();
     add_new_recommendation("recommend_concept", concepts, '.recommendations');
 

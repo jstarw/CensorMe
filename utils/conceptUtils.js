@@ -39,8 +39,6 @@ var extractConcept = function (request, cb) {
 }
 
 var filterConcepts = function (mappedValues, filteredConcepts, cb) {
-    console.log(mappedValues);
-    console.log(filteredConcepts);
     var foundConcepts = [];
     if (mappedValues && mappedValues[mapped_concepts]) {
         var conceptKeys = Object.keys(mappedValues[mapped_concepts]);
