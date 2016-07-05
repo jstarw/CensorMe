@@ -75,7 +75,7 @@ app.get('/censor', function(req, res) {
             }
         },
         function(cb) {
-            filterConcepts(extractRequest, filteredConcept, res, function(err, responseData) { 
+            filterConcepts(extractRequest, filteredConcept, res, function(err, responseData) {
                 if (err) {
                     return sendErrorResponse(err, 404, res);
                 } else {
@@ -103,6 +103,43 @@ app.get('/concept', function(req, res){
         });
     });
 });
+
+// app.get('/cortical', function(req, res){
+//     request({
+//         method: 'POST',
+//         url: 'http://api.cortical.io/rest/compare/bulk',
+//         headers: {
+//             'api-key': '9f657440-3f3d-11e6-a057-97f4c970893c'
+//         },
+//         qs: {retina_name: 'en_associative'},
+//         json:
+//         [
+//             [
+//                 {
+//                 "term" : "car"
+//                 },
+//                 {
+//                 "term" : "cat"
+//                 }
+//             ],
+//             [
+//                 {
+//                 "term" : "jaguar"
+//                 },
+//                 {
+//                 "term" : "horse"
+//                 }
+//             ]
+//         ]
+//     }, function(error, response, body){
+//         if(error) {
+//             console.log(error);
+//         } else {
+//             console.log(response.statusCode, body);
+//         }
+//     });
+
+// });
 
 var server = app.listen(port, function(cb) {
     var port = server.address().port;

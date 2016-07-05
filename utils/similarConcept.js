@@ -24,7 +24,6 @@ var getConcepts = function (user_concept, cb) {
             cb(results);
         });
     }
-    
 }
 
 var apiCall = function (data, cb){

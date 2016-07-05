@@ -44,35 +44,64 @@ var filterConcepts = function (mappedValues, filteredConcepts, cb) {
         var conceptKeys = Object.keys(mappedValues[mapped_concepts]);
     }
     var runningWeightedSum = 0;
+    createConceptArray(filteredConcepts, conceptKeys);
+    // async.forEach(filteredConcepts, function(filteredConcept, filteredCallback) {
+    //     async.forEach(conceptKeys, function(key, callback) {
+    //         compareSematicsCortical(key, filteredConcept, function(matchingResponse) {
+    //             if (isFinite(matchingResponse)) {
+    //                 var percentMatched = (matchingResponse) * 100;
+    //                 var weightedSum = percentMatched * mappedValues[mapped_concepts][key] / mappedValues[total_occurences];
+    //                 runningWeightedSum += weightedSum;
+    //             }
+    //             callback();
+    //         }, cb);
+    //     }, function (err) {
+    //         if (err) {
+    //             return errHandler(err, cb);
+    //         }
+    //         if (runningWeightedSum > 5) {
+    //             foundConcepts.push(filteredConcept);
+    //         }
+    //         runningWeightedSum = 0;
+    //         filteredCallback();
+    //     });
+    // }, function (err) {
+    //         if (err) {
+    //             return errHandler(err, cb);
+    //         }
+    //         cb(null, foundConcepts);
+    // });
+}
+
+function createConceptArray (filteredConcepts, conceptKeys) {
+    var conceptArray = [];
+    console.log('here');
     async.forEach(filteredConcepts, function(filteredConcept, filteredCallback) {
         async.forEach(conceptKeys, function(key, callback) {
-            compareSematics(key, filteredConcept, function(matchingResponse) {
-                if (isFinite(matchingResponse)) {
-                    var percentMatched = (matchingResponse) * 100;
-                    var weightedSum = percentMatched * mappedValues[mapped_concepts][key] / mappedValues[total_occurences];
-                    runningWeightedSum += weightedSum;
+            conceptArray.push([
+                {
+                    term: key
+                },
+                {
+                    term: filteredConcept
                 }
-                callback();
-            }, cb);
+            ]);
+            callback();
         }, function (err) {
             if (err) {
                 return errHandler(err, cb);
             }
-            if (runningWeightedSum > 5) {
-                foundConcepts.push(filteredConcept);
-            }
-            runningWeightedSum = 0;
             filteredCallback();
         });
     }, function (err) {
             if (err) {
                 return errHandler(err, cb);
             }
-            cb(null, foundConcepts);
+            compareSematicsCortical(conceptArray);
     });
 }
 
-function compareSematics (concept, filteredConcept, cb, done) { 
+function compareSematics (concept, filteredConcept, cb, done) {
    //cb(natural.JaroWinklerDistance(concept, filteredConcept));
    var swoogleUrl = "http://swoogle.umbc.edu/SimService/GetSimilarity";
     request({
@@ -80,8 +109,8 @@ function compareSematics (concept, filteredConcept, cb, done) {
         qs: {
             operation: 'api',
             phrase1: concept,
-            phrase2: filteredConcept, 
-            type: 'relation', 
+            phrase2: filteredConcept,
+            type: 'relation',
             corpus: 'webbase'
         }, //Query string data
         method: 'GET', //Specify the method
@@ -95,6 +124,24 @@ function compareSematics (concept, filteredConcept, cb, done) {
                 //if error the just pretend its 0
                 return cb(0);
             }
+        }
+    });
+}
+
+function compareSematicsCortical (conceptArray, cb, done) {
+    request({
+        method: 'POST',
+        url: 'http://api.cortical.io/rest/compare/bulk',
+        headers: {
+            'api-key': '9f657440-3f3d-11e6-a057-97f4c970893c'
+        },
+        qs: {retina_name: 'en_associative'},
+        json: conceptArray
+    }, function(error, response, body){
+        if(error) {
+            console.log(error);
+        } else {
+            console.log(response.statusCode, body);
         }
     });
 }
