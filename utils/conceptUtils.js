@@ -6,6 +6,7 @@ var natural = require('natural');
 var mapped_concepts = 'mapped_concepts';
 var total_occurences = 'total_occurences';
 var request = require('request');
+var _ = require('lodash');
 
 var extractConcept = function (request, cb) {
     var extractedText;
@@ -43,91 +44,70 @@ var filterConcepts = function (mappedValues, filteredConcepts, cb) {
     if (mappedValues && mappedValues[mapped_concepts]) {
         var conceptKeys = Object.keys(mappedValues[mapped_concepts]);
     }
+    var totalConcepts = conceptKeys.length;
     var runningWeightedSum = 0;
-    createConceptArray(filteredConcepts, conceptKeys);
-    // async.forEach(filteredConcepts, function(filteredConcept, filteredCallback) {
-    //     async.forEach(conceptKeys, function(key, callback) {
-    //         compareSematicsCortical(key, filteredConcept, function(matchingResponse) {
-    //             if (isFinite(matchingResponse)) {
-    //                 var percentMatched = (matchingResponse) * 100;
-    //                 var weightedSum = percentMatched * mappedValues[mapped_concepts][key] / mappedValues[total_occurences];
-    //                 runningWeightedSum += weightedSum;
-    //             }
-    //             callback();
-    //         }, cb);
-    //     }, function (err) {
-    //         if (err) {
-    //             return errHandler(err, cb);
-    //         }
-    //         if (runningWeightedSum > 5) {
-    //             foundConcepts.push(filteredConcept);
-    //         }
-    //         runningWeightedSum = 0;
-    //         filteredCallback();
-    //     });
-    // }, function (err) {
-    //         if (err) {
-    //             return errHandler(err, cb);
-    //         }
-    //         cb(null, foundConcepts);
-    // });
-}
-
-function createConceptArray (filteredConcepts, conceptKeys) {
-    var conceptArray = [];
-    console.log('here');
     async.forEach(filteredConcepts, function(filteredConcept, filteredCallback) {
-        async.forEach(conceptKeys, function(key, callback) {
-            conceptArray.push([
-                {
-                    term: key
-                },
-                {
-                    term: filteredConcept
-                }
-            ]);
-            callback();
-        }, function (err) {
+        compareConcepts(filteredConcept, conceptKeys, compareSematicsCortical, function(err, similarityMap) {
             if (err) {
-                return errHandler(err, cb);
+                return cb(err);
             }
-            filteredCallback();
+            console.log(filteredConcept + ' : ');
+            checkIfSimilar(similarityMap, totalConcepts, function(isFound) {
+                if (isFound) {
+                    foundConcepts.push(filteredConcept);
+                }
+                filteredCallback();
+            });
         });
     }, function (err) {
-            if (err) {
-                return errHandler(err, cb);
-            }
-            compareSematicsCortical(conceptArray);
-    });
-}
-
-function compareSematics (concept, filteredConcept, cb, done) {
-   //cb(natural.JaroWinklerDistance(concept, filteredConcept));
-   var swoogleUrl = "http://swoogle.umbc.edu/SimService/GetSimilarity";
-    request({
-        url: swoogleUrl, //URL to hit
-        qs: {
-            operation: 'api',
-            phrase1: concept,
-            phrase2: filteredConcept,
-            type: 'relation',
-            corpus: 'webbase'
-        }, //Query string data
-        method: 'GET', //Specify the method
-    }, function(error, response, body){
-        if(error) {
-            return errHandler(error, done)
-        } else {
-            if (response.statusCode === 200){
-                return cb(parseFloat(body));
-            } else {
-                //if error the just pretend its 0
-                return cb(0);
-            }
+        if (err) {
+            return errHandler(err, cb);
         }
+        cb(null, foundConcepts);
     });
 }
 
+// Function is used to calculate if filtered concept is found on page
+function checkIfSimilar (similarityMap, totalConcept, cb) {
+    var runningPercentage = 0;
+    async.forEach(similarityMap, function(similarityKey, callback) {
+        runningPercentage += similarityKey.simPercentage*100;
+        callback();
+    }, function () {
+            var truePercentage = runningPercentage/totalConcept;
+            console.log(truePercentage);
+            if (truePercentage > 10) {
+                cb(true);
+            } else {
+                cb(false);
+            }
+    });
+}
+
+function compareConcepts (filteredConcept, conceptKeys, compareSematicsCorticalCb, done) {
+    var conceptArray = [];
+    // Create the concept array first so cortical API can compare
+    async.forEach(conceptKeys, function(key, callback) {
+        conceptArray.push([
+            {
+                term: key
+            },
+            {
+                term: filteredConcept
+            }
+        ]);
+        callback();
+    }, function (err) {
+        if (err) {
+            return errHandler(err, cb);
+        }
+        compareSematicsCorticalCb (conceptArray, function(similarityMap) {
+            done (null, similarityMap);
+        }, done);
+    });
+}
+
+// API is used for a semantic comparison of the found and filtered concepts
 function compareSematicsCortical (conceptArray, cb, done) {
     request({
         method: 'POST',
@@ -139,9 +119,23 @@ function compareSematicsCortical (conceptArray, cb, done) {
         json: conceptArray
     }, function(error, response, body){
         if(error) {
-            console.log(error);
+            console.log('Cortical API has encountered error');
+            return done(error);
         } else {
-            console.log(response.statusCode, body);
+            if (response.statusCode !== 200) {
+                done('Error in comparison with cortical');
+            }
+            var similarityMap = _.map(body, function (data) {
+                if (data.overlappingLeftRight !== 0 ||
+                    data.overlappingRightLeft !== 0) {
+                    return {
+                        simPercentage: Math.max(data.overlappingLeftRight, data.overlappingRightLeft)
+                    };
+                }
+            });
+            // Get rid of junk data
+            var filteredSimilarityMap = _.filter(similarityMap, function(similarityItem) {return !_.isNil(similarityItem)});
+            cb(filteredSimilarityMap);
         }
     });
 }
