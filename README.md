@@ -8,7 +8,7 @@ CHROME EXTENSION
 
 NODE SERVER
 - Receives the request from the chrome extension
-- Uses HPE Haven text extraction, sentiment analysis 
+- Uses HPE Haven text extraction and concept extraction 
 - Parses web document and determinees if words need to be censored
 - Uses cortical API to do a semantic comparison of the user filtered concepts with the concepts found on the page
 - Sends response data to front end
